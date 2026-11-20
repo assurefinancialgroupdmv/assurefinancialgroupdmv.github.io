@@ -125,8 +125,6 @@ footer a:hover{color:var(--gold2)}
   <li><a href="#why">Why Us</a></li>
   <li><a href="#about">About</a></li>
   <li><a href="#faq">FAQ</a></li>
-  <li><a href="worksite.html">Worksite</a></li>
-  <li><a href="careers.html">Careers</a></li>
   <li><a href="#card">Business Card</a></li>
   <li><a href="#contact">Contact</a></li>
   <li><a class="btn" style="padding:9px 18px" href="#quote">Get a Free Quote</a></li>
@@ -297,8 +295,6 @@ footer a:hover{color:var(--gold2)}
    <a href="#services">Services</a>
    <a href="#about">About Adrienne</a>
    <a href="#faq">FAQ</a>
-   <a href="worksite.html">Worksite Benefits</a>
-   <a href="careers.html">Careers</a>
    <a href="#card">Business Card</a>
   </div>
  </div>
@@ -321,11 +317,16 @@ window.addEventListener('scroll',function(){document.getElementById('top').style
 document.getElementById('yr').textContent=new Date().getFullYear();
 function sendQuote(e){
  e.preventDefault();
- var b='Name: '+v('f_name')+'%0D%0APhone: '+v('f_phone')+'%0D%0AEmail: '+v('f_email')+'%0D%0AInterested in: '+v('f_type')+'%0D%0AState: '+v('f_state')+'%0D%0ANotes: '+v('f_msg');
- window.location.href='mailto:adrienne@assurefinancialgroup.com?subject='+encodeURIComponent('Quote request from website')+'&body='+b;
+ var n=v('f_name','').trim().split(/\s+/);
+ var p={firstName:n[0]||'Website visitor',lastName:n.length>1?n.slice(1).join(' '):void 0,email:v('f_email')||void 0,phone:v('f_phone')||void 0,state:v('f_state')||void 0,productInterest:v('f_type')||void 0,notes:v('f_msg')||void 0,company_website:'assurefinancialgroup.com',slug:'adrienne-brown'};
+ fetch('https://sleek-snail-97.convex.cloud/api/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:'clientIntake:submit',format:'convex_encoded_json',args:[p]})}).then(function(r){return r.json()}).then(function(j){
+  if(j&&j.status==='success'){var f=document.getElementById('qform');f.innerHTML='<div class="ok-msg" style="text-align:center;padding:18px 0;font-size:17px;font-weight:600;color:#1a7f37">Thank you! Your request is in. Adrienne will reach out shortly with your quote.</div>';}
+  else{mailFallback();}
+ }).catch(function(){mailFallback();});
  return false;
 }
-function v(id){return document.getElementById(id).value||'(not provided)'}
+function mailFallback(){var b='Name: '+v('f_name')+'%0D%0APhone: '+v('f_phone')+'%0D%0AEmail: '+v('f_email')+'%0D%0AInterested in: '+v('f_type')+'%0D%0AState: '+v('f_state')+'%0D%0ANotes: '+v('f_msg');window.location.href='mailto:adrienne@assurefinancialgroup.com?subject='+encodeURIComponent('Quote request from website')+'&body='+b;}
+function v(id,d){var x=document.getElementById(id);return(x&&x.value)?x.value:(d||'(not provided)')}
 </script>
 </body>
 </html>
